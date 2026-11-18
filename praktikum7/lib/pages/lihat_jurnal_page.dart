@@ -1,15 +1,18 @@
 import 'package:flutter/material.dart';
 
 class LihatJurnalPage extends StatefulWidget {
-  const LihatJurnalPage({super.key, required this.title});
+  const LihatJurnalPage({super.key});
 
-  final String title;
+  final String title = 'lihat jurnal';
 
   @override
-  State<LihatJurnalPage> createState() => _LihatJurnalPageState();
+  State<LihatJurnalPage> createState() {
+    return _LihatJurnalPageState();
+  }
 }
 
-class _LihatJurnalPageState extends State<LihatJurnalPage> {
+class _LihatJurnalPageState extends State<LihatJurnalPage> 
+{
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -17,13 +20,24 @@ class _LihatJurnalPageState extends State<LihatJurnalPage> {
         backgroundColor: Theme.of(context).colorScheme.inversePrimary,
         title: Text(widget.title),
       ),
-      body: const Center(
+      body: Padding(padding: EdgeInsets.all(20),
         child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          crossAxisAlignment: CrossAxisAlignment.center,
-          children: [],
+          children: [
+            Expanded(
+              child: ListView.separated(
+              itemBuilder: (context, index) => ListTile(
+              title: Text('Judul Indeks ke-$index'),
+              subtitle: Text('Sub-judul Indeks ke-$index'),
+              trailing: Text('Trailing Indeks ke-$index'),
+              onTap: () {},
+              ),
+              separatorBuilder: (context, index) => const Divider(),
+              itemCount: 20, // Jumlah baris kita set manual dulu..
+              ),
+            ),
+          ],
         ),
-      ),
+      )
     );
   }
 }
