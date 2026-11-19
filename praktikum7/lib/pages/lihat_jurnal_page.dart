@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:mydj/data/data_provider.dart';
 import 'package:mydj/data/jurnal.dart';
+import 'package:mydj/pages/detail_jurnal_page.dart';
 import 'package:provider/provider.dart';
 
 class LihatJurnalPage extends StatefulWidget {
@@ -15,6 +16,16 @@ class LihatJurnalPage extends StatefulWidget {
 }
 
 class _LihatJurnalPageState extends State<LihatJurnalPage> {
+  // Navigasi ke halaman detail jurnal.
+  void _openDetailJurnal(BuildContext context, Jurnal jurnal) {
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => DetailJurnalPage(jurnal: jurnal),
+      ),
+    );
+  }
+
   @override
   void initState() {
     super.initState();
@@ -60,7 +71,9 @@ class _LihatJurnalPageState extends State<LihatJurnalPage> {
                                 .hapusJurnal(daftarJurnal[index].id!);
                           },
                         ),
-                        onTap: () {},
+                        onTap: () {
+                          _openDetailJurnal(context, daftarJurnal[index]);
+                        },
                       ),
                       separatorBuilder: (context, index) => const Divider(),
                       itemCount: daftarJurnal.length,

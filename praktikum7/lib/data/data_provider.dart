@@ -29,9 +29,14 @@ class DataProvider extends ChangeNotifier {
 
   // READ: ambil semua jurnal dari database.
   Future<void> muatJurnal() async {
-    final db = await DatabaseHelper.instance.database;
-    final rows = await db.query('jurnal', orderBy: 'id DESC');
-    _jurnalTersimpan = rows.map((row) => Jurnal.fromMap(row)).toList();
+    try {
+      final db = await DatabaseHelper.instance.database;
+      final rows = await db.query('jurnal', orderBy: 'id DESC');
+      _jurnalTersimpan = rows.map((row) => Jurnal.fromMap(row)).toList();
+    } catch (error) {
+      // Database belum siap (mis. pada pengujian di host).
+      _jurnalTersimpan = [];
+    }
     notifyListeners();
   }
 
@@ -39,6 +44,20 @@ class DataProvider extends ChangeNotifier {
   Future<void> tambahJurnal(Jurnal jurnal) async {
     final db = await DatabaseHelper.instance.database;
     await db.insert('jurnal', jurnal.toMap());
+    await muatJurnal();
+  }
+
+  // UPDATE: perbarui jurnal yang sudah ada, lalu muat ulang daftarnya.
+  Future<void> ubahJurnal(Jurnal jurnal) async {
+    final db = await DatabaseHelper.instance.database;
+    // Kolom id tidak ikut di-update, id tetap menjadi penanda baris.
+    final Map<String, dynamic> data = jurnal.toMap()..remove('id');
+    await db.update(
+      'jurnal',
+      data,
+      where: 'id = ?',
+      whereArgs: [jurnal.id],
+    );
     await muatJurnal();
   }
 
