@@ -1,10 +1,9 @@
 import 'package:flutter/material.dart';
 
-import 'lihat_jurnal_page.dart';
-import 'buat_jurnal_page.dart';
-import 'akun_page.dart';
-import 'tentang_aplikasi_page.dart';
-import 'coba.dart';
+import 'package:mydj/pages/akun_page.dart';
+import 'package:mydj/pages/buat_jurnal_page.dart';
+import 'package:mydj/pages/lihat_jurnal_page.dart';
+import 'package:mydj/pages/tentang_aplikasi_page.dart';
 
 class SimpleHomePage extends StatefulWidget {
   const SimpleHomePage({super.key, required this.title});
@@ -20,16 +19,7 @@ class _SimpleHomePageState extends State<SimpleHomePage> {
     Navigator.push(
       context,
       MaterialPageRoute(
-        builder: (context) => const LihatJurnalPage(title: 'Lihat Jurnal'),
-      ),
-    );
-  }
-
-  void _opencoba(BuildContext context) {
-    Navigator.push(
-      context,
-      MaterialPageRoute
-      (builder: (context) => const Coba(title: 'coba'),
+        builder: (context) => const LihatJurnalPage(),
       ),
     );
   }
@@ -38,7 +28,7 @@ class _SimpleHomePageState extends State<SimpleHomePage> {
     Navigator.push(
       context,
       MaterialPageRoute(
-        builder: (context) => const BuatJurnalPage(title: 'Buat Jurnal'),
+        builder: (context) => const BuatJurnalPage(),
       ),
     );
   }
@@ -46,7 +36,9 @@ class _SimpleHomePageState extends State<SimpleHomePage> {
   void _openAkunPage(BuildContext context) {
     Navigator.push(
       context,
-      MaterialPageRoute(builder: (context) => const AkunPage(title: 'Akun')),
+      MaterialPageRoute(
+        builder: (context) => const AkunPage(),
+      ),
     );
   }
 
@@ -54,8 +46,7 @@ class _SimpleHomePageState extends State<SimpleHomePage> {
     Navigator.push(
       context,
       MaterialPageRoute(
-        builder: (context) =>
-            const TentangAplikasiPage(title: 'Tentang Aplikasi'),
+        builder: (context) => const TentangAplikasiPage(),
       ),
     );
   }

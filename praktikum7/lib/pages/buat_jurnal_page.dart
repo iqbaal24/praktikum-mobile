@@ -1,36 +1,76 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/cupertino.dart';
+import 'package:mydj/components/media_selector.dart';
+import 'package:mydj/data/data_provider.dart';
+import 'package:mydj/data/jurnal.dart';
+import 'package:provider/provider.dart';
 
 class BuatJurnalPage extends StatefulWidget {
-  final String title = 'Buat Jurnal';
   const BuatJurnalPage({super.key});
+
+  final String title = 'Buat Jurnal';
+
   @override
-  State<StatefulWidget> createState() {
+  State<BuatJurnalPage> createState() {
     return _BuatJurnalPageState();
   }
 }
 
 class _BuatJurnalPageState extends State<BuatJurnalPage> {
-  @override
+  // State untuk menampung isian dari semua widget input.
+  String kelas = '';
+  String mapel = '';
+  int jamKe = 0;
+  String tujuanPembelajaran = '';
+  String materiTopikPembelajaran = '';
+  String kegiatanPembelajaran = '';
+  String dimensiProfilPelajarPancasila = '';
+
+  // Fungsi _textArea: dekomposisi widget input teks banyak (multi-baris).
   Widget _textArea(
     String label,
     String hint,
+    void Function(String text) onChanged,
   ) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(label),
-        SizedBox(height: 10),
+        const SizedBox(height: 10),
         TextField(
           decoration: InputDecoration(
             border: OutlineInputBorder(),
             labelText: hint,
           ),
           maxLines: 4,
-          onChanged: (value) => {},
+          onChanged: onChanged,
         ),
       ],
     );
+  }
+
+  // Menyimpan jurnal ke SQLite melalui DataProvider.
+  Future<void> _saveJurnal(BuildContext context) async {
+    final Jurnal jurnal = Jurnal(
+      kelas: kelas,
+      mapel: mapel,
+      jam: jamKe,
+      tujuanPembelajaran: tujuanPembelajaran,
+      materiTopikPembelajaran: materiTopikPembelajaran,
+      kegiatanPembelajaran: kegiatanPembelajaran,
+      dimensiProfilPelajarPancasila: dimensiProfilPelajarPancasila,
+    );
+
+    // context.read() -> menyimpan data ke state global.
+    final DataProvider provider = context.read<DataProvider>();
+    // Simpan ke SQLite lewat Provider.
+    await provider.tambahJurnal(jurnal);
+
+    // BuildContext dipakai setelah operasi async, jadi harus dicek dulu.
+    if (context.mounted) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Jurnal berhasil disimpan')),
+      );
+    }
   }
 
   @override
@@ -46,81 +86,103 @@ class _BuatJurnalPageState extends State<BuatJurnalPage> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              SizedBox(height: 10),
-              _textArea('Tujuan Pembelajaran', 'Masukkan Tujuan Pembelajaran'),
-              SizedBox(height: 10),
-              _textArea('Materi/Topik Pembelajaran', 'Masukkan Materi/Topik Pembelajaran'),
-              SizedBox(height: 10),
-              _textArea('Kegiatan Pembelajaran', 'Masukkan Kegiatan Pembelajaran'),
-              SizedBox(height: 10),
-              _textArea('Dimensi Profil Pelajar Pancasila', 'Tuliskan Dimensi Profil Pelajar Pancasila'),
-              SizedBox(height: 10),
-
-              SizedBox(height: 10),
-              SizedBox(
-                width: double.infinity, 
-                child: ElevatedButton( 
-                onPressed: () => {}, 
-                child: Text('Simpan')
-                ),
-              ),
-
               Text('Kelas:'),
-              SizedBox(height: 10), // Jeda 10 jarak
+              const SizedBox(height: 10), // Jeda 10 jarak
               TextField(
                 decoration: InputDecoration(
                   border: OutlineInputBorder(),
                   labelText: 'Masukkan Kelas',
                 ),
-                onChanged: (value) => {},
+                onChanged: (value) => {
+                  setState(() {
+                    kelas = value;
+                  }),
+                },
               ),
 
-              SizedBox(
-                height: 10,
-              ), // Beri 10 unit jarak dari komponen di atasnya
+              const SizedBox(height: 10), // Beri 10 unit jarak dari komponen di atasnya
               Text('Nama Mapel'),
-              SizedBox(height: 10),
+              const SizedBox(height: 10),
               TextField(
                 decoration: InputDecoration(
                   border: OutlineInputBorder(),
                   labelText: 'Masukkan Nama Mapel',
                 ),
-                onChanged: (value) => {},
+                onChanged: (value) => {
+                  setState(() {
+                    mapel = value;
+                  }),
+                },
               ),
 
-              SizedBox(
-                height: 10,
-              ), // Beri 10 unit jarak dari komponen di atasnya
+              const SizedBox(height: 10), // Beri 10 unit jarak dari komponen di atasnya
               Text('Jam Ke-'),
-              SizedBox(height: 10),
+              const SizedBox(height: 10),
               DropdownButtonFormField<String>(
                 decoration: InputDecoration(
                   border: OutlineInputBorder(), // garis tepi
                   labelText: 'Pilih Jam',
                 ),
                 items: [
-                  DropdownMenuItem(value: '1', child: Text('1')),
-                  DropdownMenuItem(value: '2', child: Text('2')),
-                  DropdownMenuItem(value: '3', child: Text('3')),
-                  DropdownMenuItem(value: '4', child: Text('4')),
-                  DropdownMenuItem(value: '5', child: Text('5')),
-                  DropdownMenuItem(value: '6', child: Text('6')),
-                  DropdownMenuItem(value: '7', child: Text('7')),
-                  DropdownMenuItem(value: '8', child: Text('8')),
+                  const DropdownMenuItem(value: '1', child: Text('1')),
+                  const DropdownMenuItem(value: '2', child: Text('2')),
+                  const DropdownMenuItem(value: '3', child: Text('3')),
+                  const DropdownMenuItem(value: '4', child: Text('4')),
+                  const DropdownMenuItem(value: '5', child: Text('5')),
+                  const DropdownMenuItem(value: '6', child: Text('6')),
+                  const DropdownMenuItem(value: '7', child: Text('7')),
+                  const DropdownMenuItem(value: '8', child: Text('8')),
                 ],
-                onChanged: (value) => {},
+                onChanged: (value) => {
+                  setState(() {
+                    jamKe = int.tryParse(value ?? '0') ?? 0;
+                  }),
+                },
               ),
 
-              SizedBox(height: 10),
-              Text('Tujuan Pembelajaran'),
-              SizedBox(height: 10),
-              TextField(
-                decoration: InputDecoration(
-                  border: OutlineInputBorder(),
-                  labelText: 'Masukkan Tujuan Pembelajaran',
+              const SizedBox(height: 10),
+              _textArea(
+                'Tujuan Pembelajaran',
+                'Masukkan Tujuan Pembelajaran',
+                (text) => tujuanPembelajaran = text,
+              ),
+              const SizedBox(height: 10),
+              _textArea(
+                'Materi/Topik Pembelajaran',
+                'Masukkan Materi/Topik Pembelajaran',
+                (text) => materiTopikPembelajaran = text,
+              ),
+              const SizedBox(height: 10),
+              _textArea(
+                'Kegiatan Pembelajaran',
+                'Masukkan Kegiatan Pembelajaran',
+                (text) => kegiatanPembelajaran = text,
+              ),
+              const SizedBox(height: 10),
+              _textArea(
+                'Dimensi Profil Pelajar Pancasila',
+                'Tuliskan Dimensi Profil Pelajar Pancasila',
+                (text) => dimensiProfilPelajarPancasila = text,
+              ),
+
+              const SizedBox(height: 10),
+              Text('Foto Kegiatan'),
+              const SizedBox(height: 10),
+              const MediaSelector(), // MediaSelector untuk foto.
+              const SizedBox(height: 10),
+              Text('Video Kegiatan'),
+              const SizedBox(height: 10),
+              const MediaSelector(
+                mediaType: MediaType.video,
+              ), // MediaSelector untuk video.
+
+              const SizedBox(height: 10),
+              SizedBox(
+                width: double.infinity,
+                child: ElevatedButton(
+                  onPressed: () => {_saveJurnal(context)},
+                  child: const Text('Simpan'),
                 ),
-                maxLines: 4, // Property ini yang menjadikan seperti textarea
-                onChanged: (value) => {},
               ),
             ],
           ),

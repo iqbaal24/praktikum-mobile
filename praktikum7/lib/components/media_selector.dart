@@ -1,7 +1,7 @@
 import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
-import 'package:praktikum7/component/video_preview.dart';
+import 'package:mydj/components/video_preview.dart';
 
 enum MediaType {
   photo,
@@ -13,7 +13,7 @@ class MediaSelector extends StatefulWidget {
   const MediaSelector({super.key, this.mediaType = MediaType.photo});
 
   @override
-  State<StatefulWidget> createState() {
+  State<MediaSelector> createState() {
     return _MediaSelectorState();
   }
 }
@@ -32,6 +32,7 @@ class _MediaSelectorState extends State<MediaSelector> {
     return media;
   }
 
+  // Memilih media dari kamera.
   void _selectFromCamera() async {
     XFile? media = await _retrieveMedia(ImageSource.camera);
     if (media != null) {
@@ -41,6 +42,7 @@ class _MediaSelectorState extends State<MediaSelector> {
     }
   }
 
+  // Memilih media dari galeri.
   void _selectFromGallery() async {
     XFile? media = await _retrieveMedia(ImageSource.gallery);
     if (media != null) {
@@ -50,6 +52,7 @@ class _MediaSelectorState extends State<MediaSelector> {
     }
   }
 
+  // Menghilangkan tampilan media yang dipilih.
   void _deleteSelected() {
     setState(() {
       _mediaPath = '';

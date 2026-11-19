@@ -1,4 +1,4 @@
-package com.example.praktikum7
+package id.ac.polinema.mydj
 
 import io.flutter.embedding.android.FlutterActivity
 

@@ -1,12 +1,52 @@
 import 'package:flutter/material.dart';
-import 'package:praktikum7/data/jurnal.dart';
+import 'package:mydj/data/database_helper.dart';
+import 'package:mydj/data/jurnal.dart';
+import 'package:mydj/data/login_info.dart';
 
 class DataProvider extends ChangeNotifier {
-  final List<Jurnal> _jurnalTersimpan = [];
+  List<Jurnal> _jurnalTersimpan = [];
 
-  void addNew(Jurnal jurnal) {
-    _jurnalTersimpan.add(jurnal);
+  // ------------------- Sesi pengguna (Shared Preferences) -------------------
+
+  // Cek sudah login atau belum.
+  Future<bool> isLoggedIn() async {
+    final LoginInfo loginInfo = await LoginInfo.fromSharedPreferences();
+    return loginInfo.isLoggedIn;
+  }
+
+  // Simpan informasi sesi ketika login.
+  Future<void> saveLoginInfo(String username, String password) async {
+    final LoginInfo loginInfo = await LoginInfo.fromSharedPreferences();
+    // Isi
+    loginInfo.username = username;
+    loginInfo.password = password;
+    loginInfo.isLoggedIn = true;
+    // Simpan
+    await loginInfo.saveToSharedPreferences();
+  }
+
+  // ------------------- Jurnal (SQLite) -------------------
+
+  // READ: ambil semua jurnal dari database.
+  Future<void> muatJurnal() async {
+    final db = await DatabaseHelper.instance.database;
+    final rows = await db.query('jurnal', orderBy: 'id DESC');
+    _jurnalTersimpan = rows.map((row) => Jurnal.fromMap(row)).toList();
     notifyListeners();
+  }
+
+  // CREATE: simpan jurnal baru, lalu muat ulang daftarnya.
+  Future<void> tambahJurnal(Jurnal jurnal) async {
+    final db = await DatabaseHelper.instance.database;
+    await db.insert('jurnal', jurnal.toMap());
+    await muatJurnal();
+  }
+
+  // DELETE: hapus jurnal berdasarkan id, lalu muat ulang daftarnya.
+  Future<void> hapusJurnal(int id) async {
+    final db = await DatabaseHelper.instance.database;
+    await db.delete('jurnal', where: 'id = ?', whereArgs: [id]);
+    await muatJurnal();
   }
 
   List<Jurnal> get jurnalTersimpan {

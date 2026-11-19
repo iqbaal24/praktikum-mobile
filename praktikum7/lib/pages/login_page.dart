@@ -1,13 +1,16 @@
 import 'package:flutter/material.dart';
-import 'package:praktikum7/component/password_field.dart';
-import 'package:praktikum7/pages/simple_home_page.dart';
+import 'package:mydj/components/password_field.dart';
+import 'package:mydj/data/data_provider.dart';
+import 'package:mydj/pages/simple_home_page.dart';
+import 'package:provider/provider.dart';
 
 class LoginPage extends StatefulWidget {
-  final String title = 'MyDJ - Welcome';
   const LoginPage({super.key});
 
+  final String title = 'MyDJ - Welcome';
+
   @override
-  State<StatefulWidget> createState() {
+  State<LoginPage> createState() {
     return _LoginPageState();
   }
 }
@@ -16,16 +19,27 @@ class _LoginPageState extends State<LoginPage> {
   String namaPengguna = ''; // Menyimpan username
   String sandi = ''; // Menyimpan password
 
-  void login(BuildContext context) {
+  Future<void> _login(BuildContext context) async {
+    // Ambil instance Provider (state management) kita dari BuildContext.
+    final DataProvider provider = context.read<DataProvider>();
+
+    // Jika username dan password benar..
     if (namaPengguna == 'guru' && sandi == 'guru') {
-      Navigator.push(
-        context,
-        MaterialPageRoute(
-          builder: (context) => SimpleHomePage(title: 'Beranda'),
-        ),
-      );
+      // Simpan info login lewat Provider (State Management).
+      await provider.saveLoginInfo(namaPengguna, sandi);
+
+      // Jika ingin menggunakan BuildContext dalam operasi async, harus dicek dulu.
+      if (context.mounted) {
+        // Buka halaman home.
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (context) => const SimpleHomePage(title: 'Beranda'),
+          ),
+        );
+      }
     } else {
-      // Opsional: menampilkan pesan jika username/password salah
+      // Menampilkan pesan jika username/password salah.
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(content: Text('Nama pengguna atau sandi salah!')),
       );
@@ -47,7 +61,7 @@ class _LoginPageState extends State<LoginPage> {
               mainAxisAlignment: MainAxisAlignment.center,
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
-                // Gambar Login
+                // Menampilkan gambar login
                 Image.asset('assets/images/login_icon.png', width: 250),
                 const SizedBox(height: 15),
 
@@ -96,7 +110,7 @@ class _LoginPageState extends State<LoginPage> {
                   width: double.infinity,
                   child: ElevatedButton(
                     onPressed: () {
-                      login(context);
+                      _login(context);
                     },
                     child: const Text('Login'),
                   ),

@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 
 class TentangAplikasiPage extends StatefulWidget {
-  const TentangAplikasiPage({super.key, required this.title});
+  const TentangAplikasiPage({super.key});
 
-  final String title;
+  final String title = 'Tentang Aplikasi';
 
   @override
   State<TentangAplikasiPage> createState() => _TentangAplikasiPageState();

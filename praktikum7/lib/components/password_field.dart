@@ -22,7 +22,7 @@ class _PasswordFieldState extends State<PasswordField> {
   Widget build(BuildContext context) {
     return TextFormField(obscureText: _obscure,
     decoration: InputDecoration(
-          labelText: 'password',
+          labelText: 'Password',
           border: OutlineInputBorder(),
           suffixIcon: 
           IconButton(icon: Icon(_obscure ? Icons.visibility_off: Icons.visibility),
